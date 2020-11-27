@@ -1,5 +1,10 @@
 {
+  "build": {
+    "env": {
+      "NPM_TOKEN": true
+    }
+  },
   "cleanUrls": true,
   "trailingSlash": true,
-  "rewrites": [{"source": "/:url*", "destination": "/api/proxy"}]
+  "rewrites": [{ "source": "/:url*", "destination": "/api/proxy" }]
 }
