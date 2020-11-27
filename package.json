@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/seenevz/simple-proxy/issues"
   },
-  "homepage": "https://github.com/seenevz/simple-proxy#readme"
+  "homepage": "https://github.com/seenevz/simple-proxy#readme",
+  "dependencies": {
+    "jsrsasign": "^10.1.4"
+  }
 }
