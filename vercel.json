@@ -1,5 +1,5 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
-  "rewrites": [{"source": "/proxy/:url*", "destination": "https://url*"}]
+  "rewrites": [{"source": "/", "destination": "/api/proxy"}]
 }
