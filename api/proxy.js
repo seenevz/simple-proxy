@@ -1,4 +1,4 @@
-const auth = import('./auth')
+const auth = import('./auth.js')
 
 const urlProxy = (req, resp) => {
   const https = require("https");
