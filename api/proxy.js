@@ -11,8 +11,7 @@ const urlProxy = (req, resp) => {
     originalResp.on("data", chunck => (bodyChunks += chunck));
 
     originalResp.on("end", () => {
-      resp.writeHead(200, "ok", headers);
-      resp.end(bodyChunks);
+      resp.status(200).end(bodyChunks);
     });
   });
 };
