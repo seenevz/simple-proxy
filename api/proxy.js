@@ -1,4 +1,4 @@
-const auth = import('./auth.js')
+const auth = import("./auth.js");
 
 const urlProxy = (req, resp) => {
   const https = require("https");
@@ -19,16 +19,16 @@ const urlProxy = (req, resp) => {
 };
 
 const corsHandler = fn => async (req, resp) => {
-  console.log(req.headers)
+  console.log(req.headers["x-auth-token"]);
   // if ((await auth).verifyToken(req.headers)) {
-    
+
   // } else {
-    
+
   // }
   resp.setHeader("Access-Control-Allow-Origin", "*");
   resp.setHeader("Access-Control-Expose-Headers", "*");
   resp.setHeader("Access-Control-Allow-Methods", "GET");
-  
+
   return await fn(req, resp);
 };
 
