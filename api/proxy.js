@@ -1,10 +1,10 @@
 module.exports = (req, resp) => {
   const https = require("https");
   const {
-    query: { proxiedUrl },
+    query: { url },
   } = req;
 
-  https.get(proxiedUrl, originalResp => {
+  https.get(url, originalResp => {
     let bodyChunks = "";
     const headers = {
       ...originalResp.headers,
