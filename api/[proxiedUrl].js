@@ -1,23 +1,23 @@
 module.exports = (req, resp) => {
   const https = require("https");
-  const proxiedUrl = req.query.url;
+  const {
+    query: { proxiedUrl },
+  } = req;
 
   https.get(proxiedUrl, originalResp => {
     let bodyChunks = "";
     const headers = {
       ...originalResp.headers,
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Expose-Headers": "*"
+      "Access-Control-Expose-Headers": "*",
     };
 
-    console.log(headers)
+    console.log(headers);
 
     originalResp.on("data", chunck => (bodyChunks += chunck));
     originalResp.on("end", () => {
-    
-    resp.writeHead(200, 'ok', headers)
-    resp.end(bodyChunks)
+      resp.writeHead(200, "ok", headers);
+      resp.end(bodyChunks);
     });
   });
-
 };
