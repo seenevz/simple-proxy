@@ -19,7 +19,7 @@ const urlProxy = (req, resp) => {
 };
 
 const corsHandler = fn => async (req, resp) => {
-  console.log(req.headers["x-auth-token"]);
+  console.log(req.headers);
   // if ((await auth).verifyToken(req.headers)) {
 
   // } else {
