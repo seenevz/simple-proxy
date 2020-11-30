@@ -8,25 +8,34 @@ const urlProxy = (req, resp) => {
   } = req;
 
   https.get(url, originalResp => {
-    let bodyChunks = "";
+    const headers = { ...originalResp.headers, ...req.headers };
 
-    originalResp.on("data", chunck => (bodyChunks += chunck));
+    resp.writeHead(200, headers);
+
+    originalResp.on("data", chunk => resp.write(chunk));
 
     originalResp.on("end", () => {
-      resp.status(200).end(bodyChunks);
+      resp.end();
     });
   });
 };
 
 const corsHandler = fn => async (req, resp) => {
-  if (auth.verifyToken(req.headers["x-auth-token"])) {
-    console.log("I'm allowed");
-  } else {
-    console.log("I'm not allowed");
+  //To authenticate, request must have an header called x-auth-token with a valid token
+  try {
+    if (auth.verifyToken(req.headers["x-auth-token"])) {
+      resp.setHeader("Access-Control-Allow-Origin", "*");
+      resp.setHeader("Access-Control-Expose-Headers", "*");
+      resp.setHeader("Access-Control-Allow-Methods", "GET");
+    } else {
+      resp.status(401).end();
+      return;
+    }
+  } catch (error) {
+    //If token is malformed, it will throw an error while trying to verify
+    resp.status(400).end();
+    return;
   }
-  resp.setHeader("Access-Control-Allow-Origin", "*");
-  resp.setHeader("Access-Control-Expose-Headers", "*");
-  resp.setHeader("Access-Control-Allow-Methods", "GET");
 
   return await fn(req, resp);
 };
