@@ -19,10 +19,10 @@ const urlProxy = (req, resp) => {
 };
 
 const corsHandler = fn => async (req, resp) => {
-  if ((await auth).verifyToken(req.headers["x-auth-token"])) {
+  if (auth.verifyToken(req.headers["x-auth-token"])) {
     console.log("I'm allowed");
   } else {
-    console.log("I'm not allowed")
+    console.log("I'm not allowed");
   }
   resp.setHeader("Access-Control-Allow-Origin", "*");
   resp.setHeader("Access-Control-Expose-Headers", "*");
