@@ -21,12 +21,22 @@ const urlProxy = (req, resp) => {
 };
 
 const corsHandler = fn => async (req, resp) => {
+  resp.setHeader("Access-Control-Allow-Origin", req.headers.origin);
+  resp.setHeader("Access-Control-Allow-Headers", "x-auth-token");
+  resp.setHeader("Access-Control-Expose-Headers", "*");
+  resp.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  resp.end();
+
   //To authenticate, request must have an header called x-auth-token with a valid token
+  if (req.method === "OPTIONS") {
+    resp.status(200).end();
+    return;
+  }
+
   try {
+    //check if user is allowed
     if (auth.verifyToken(req.headers["x-auth-token"])) {
-      resp.setHeader("Access-Control-Allow-Origin", "*");
-      resp.setHeader("Access-Control-Expose-Headers", "*");
-      resp.setHeader("Access-Control-Allow-Methods", "GET");
+      return await fn(req, resp);
     } else {
       resp.status(401).end();
       return;
@@ -36,8 +46,6 @@ const corsHandler = fn => async (req, resp) => {
     resp.status(400).end();
     return;
   }
-
-  return await fn(req, resp);
 };
 
 module.exports = corsHandler(urlProxy);
