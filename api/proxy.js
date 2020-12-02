@@ -21,7 +21,7 @@ const urlProxy = (req, resp) => {
 };
 
 const corsHandler = fn => async (req, resp) => {
-  resp.setHeader("Access-Control-Allow-Origin", req.headers.origin);
+  resp.setHeader("Access-Control-Allow-Origin", (req.headers.origin || "*"));
   resp.setHeader("Access-Control-Allow-Headers", "x-auth-token");
   resp.setHeader("Access-Control-Expose-Headers", "*");
   resp.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
