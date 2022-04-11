@@ -1,4 +1,4 @@
-const auth = require("./auth.js");
+const auth = require("./_auth.js");
 
 const urlProxy = (req, resp) => {
   const https = require("https");
@@ -6,7 +6,8 @@ const urlProxy = (req, resp) => {
   const {
     query: { url },
   } = req;
-
+  console.log('url', url);
+  
   https.get(url, originalResp => {
     const headers = { ...originalResp.headers, ...req.headers };
 
@@ -25,7 +26,8 @@ const corsHandler = fn => async (req, resp) => {
   resp.setHeader("Access-Control-Allow-Headers", "x-auth-token");
   resp.setHeader("Access-Control-Expose-Headers", "*");
   resp.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-
+  console.log('headers');
+  
   //To authenticate, request must have an header called x-auth-token with a valid token
   if (req.method === "OPTIONS") {
     resp.status(200).end();
