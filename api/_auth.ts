@@ -1,8 +1,8 @@
 const { KJUR } = require("jsrsasign");
 
-const allowedUsers = () => JSON.parse(process.env.ALLOWED_USERS);
+const allowedUsers = () => JSON.parse(process.env.ALLOWED_USERS as string) as string[];
 
-const verifyToken = token =>
+const verifyToken = (token: string) =>
   allowedUsers().reduce(
     (_, sub) =>
       KJUR.jws.JWS.verifyJWT(token, process.env.SECRET, {
@@ -12,7 +12,7 @@ const verifyToken = token =>
     false
   );
 
-const createToken = payload =>
+const createToken = (payload: Record<string, string>) =>
   KJUR.jws.JWS.sign(
     "HS512",
     { alg: "HS512", typ: "JWT" },
@@ -26,7 +26,7 @@ const createToken = payload =>
 //   })
 // );
 
-module.exports = {
+export default {
   verifyToken,
   createToken,
 };

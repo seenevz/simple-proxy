@@ -1,8 +1,11 @@
-const auth = require("./_auth.js");
-const https = require("https");
+import { VercelRequest, VercelResponse } from "@vercel/node";
+import https from "https"
+import auth from "./_auth"
 
-const urlProxy = (req, resp) => {
-  return new Promise((resolve, reject) => {
+type AsyncReqHandler = (req: VercelRequest, resp: VercelResponse) => Promise<void>
+
+const urlProxy = (req: VercelRequest, resp: VercelResponse) => {
+  return new Promise<void>((resolve, reject) => {
     const {
       query: { url },
       headers,
@@ -10,7 +13,7 @@ const urlProxy = (req, resp) => {
       body,
     } = req;
 
-    const { hostname, pathname, searchParams } = new URL(url);
+    const { hostname, pathname, searchParams } = new URL(url as string);
 
     const originalReq = https.request(
       {
@@ -52,7 +55,8 @@ const urlProxy = (req, resp) => {
   });
 };
 
-const corsHandler = fn => async (req, resp) => {
+
+const corsHandler = (fn: AsyncReqHandler) => async (req: VercelRequest, resp: VercelResponse) => {
   resp.setHeader("Access-Control-Allow-Origin", "*");
   resp.setHeader("Access-Control-Allow-Headers", "*");
   resp.setHeader("Access-Control-Expose-Headers", "*");
