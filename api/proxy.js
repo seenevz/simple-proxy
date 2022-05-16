@@ -38,9 +38,12 @@ const urlProxy = (req, resp) => {
     );
     console.log(headers);
 
-    const reqBody = headers["Content-Type"].includes("application/json")
-      ? JSON.stringify(body)
-      : new URLSearchParams(body);
+    let reqBody = "";
+    if (headers["Content-Type"]) {
+      reqBody = headers["Content-Type"].includes("application/json")
+        ? JSON.stringify(body)
+        : new URLSearchParams(body).toString();
+    }
 
     originalReq.removeHeader("host");
     originalReq.end(reqBody);
