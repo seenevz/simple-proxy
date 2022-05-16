@@ -44,7 +44,7 @@ const urlProxy = (req, resp) => {
         : new URLSearchParams(body).toString();
     }
 
-    originalReq.setHeader("x-api-key", headers["x-api-key"]);
+    originalReq.setHeader("x-api-key", headers["x-api-key"] || "");
     originalReq.end(reqBody);
   });
 };
