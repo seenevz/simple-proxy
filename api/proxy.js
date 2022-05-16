@@ -15,15 +15,15 @@ const urlProxy = (req, resp) => {
     const originalReq = https.request(
       {
         hostname,
-        pathname,
+        path: pathname,
         searchParams,
         method,
       },
       originalResp => {
-        resp.writeHead(originalResp.statusCode, {
-          ...originalResp.headers,
-          ...resp.headers,
-        });
+        // resp.writeHead(originalResp.statusCode, {
+        //   ...originalResp.headers,
+        //   ...resp.headers,
+        // });
 
         originalResp.on("data", chunk => resp.write(chunk));
 
@@ -35,7 +35,7 @@ const urlProxy = (req, resp) => {
         originalResp.on("error", reject);
       }
     );
-    console.log(headers);
+    console.log(originalReq.path, pathname);
 
     let reqBody = "";
     if (headers["content-type"]) {
