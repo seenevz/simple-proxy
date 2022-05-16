@@ -43,6 +43,8 @@ const corsHandler = fn => async (req, resp) => {
     // }
   } catch (error) {
     //If token is malformed, it will throw an error while trying to verify
+    console.error(error);
+
     resp.status(400).end();
     return;
   }
