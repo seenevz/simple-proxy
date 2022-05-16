@@ -36,9 +36,12 @@ const urlProxy = (req, resp) => {
         originalResp.on("error", reject);
       }
     );
+    const reqBody = headers["Content-Type"].includes("application/json")
+      ? JSON.stringify(body)
+      : new URLSearchParams(body);
 
     originalReq.removeHeader("host");
-    originalReq.end(body);
+    originalReq.end(reqBody);
   });
 };
 
