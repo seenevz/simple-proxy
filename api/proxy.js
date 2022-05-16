@@ -8,22 +8,25 @@ const urlProxy = (req, resp) => {
     headers,
   } = req;
 
-  const { hostname, pathname, searchParams } = new URL(url);
+  const { hostname, pathname, searchParams, host } = new URL(url);
 
-  https.get({ headers, hostname, pathname, searchParams }, originalResp => {
-    resp.writeHead(originalResp.statusCode, {
-      ...originalResp.headers,
-      ...resp.headers,
-    });
+  https.get(
+    { headers: { ...headers, host }, hostname, pathname, searchParams },
+    originalResp => {
+      resp.writeHead(originalResp.statusCode, {
+        ...originalResp.headers,
+        ...resp.headers,
+      });
 
-    originalResp.on("data", chunk => resp.write(chunk));
+      originalResp.on("data", chunk => resp.write(chunk));
 
-    originalResp.on("end", () => {
-      resp.end();
-    });
+      originalResp.on("end", () => {
+        resp.end();
+      });
 
-    originalResp.on("error", console.error);
-  });
+      originalResp.on("error", console.error);
+    }
+  );
 };
 
 const corsHandler = fn => (req, resp) => {
