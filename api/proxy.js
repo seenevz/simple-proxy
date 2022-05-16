@@ -45,6 +45,8 @@ const urlProxy = (req, resp) => {
     }
 
     originalReq.setHeader("x-api-key", headers["x-api-key"] || "");
+    console.log(originalReq.getHeaders());
+
     originalReq.end(reqBody);
   });
 };
