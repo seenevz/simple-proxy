@@ -16,7 +16,6 @@ const urlProxy = (req: VercelRequest, resp: VercelResponse) => {
       query: { url },
       headers,
       method,
-      body,
     } = req;
 
     const { hostname, pathname, searchParams } = new URL(url as string);
@@ -45,18 +44,21 @@ const urlProxy = (req: VercelRequest, resp: VercelResponse) => {
       }
     );
 
-    let reqBody = "";
-    if (headers["content-type"]) {
-      proxyReq.setHeader("content-type", headers["content-type"]);
-      reqBody = headers["content-type"].includes("application/json")
-        ? JSON.stringify(body)
-        : new URLSearchParams(body).toString();
-    }
-
+    // let reqBody = "";
+    // if (headers["content-type"]) {
+    //   proxyReq.setHeader("content-type", headers["content-type"]);
+    //   reqBody = headers["content-type"].includes("application/json")
+    //     ? JSON.stringify(body)
+    //     : new URLSearchParams(body).toString();
+    // }
     addHeaders(proxyReq, headers)
-    console.log(proxyReq.getHeaders());
 
-    proxyReq.end(reqBody);
+    req.on("data", chunk => proxyReq.write(chunk))
+
+    req.on("end", () => proxyReq.end())
+
+    req.on("error", reject)
+
   });
 };
 
