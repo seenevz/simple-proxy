@@ -6,12 +6,20 @@ const urlProxy = (req, resp) => {
   const {
     query: { url },
     headers,
+    method,
   } = req;
 
   const { hostname, pathname, searchParams, host } = new URL(url);
 
-  https.get(
-    { headers: { ...headers, host }, hostname, pathname, searchParams },
+  https.request(
+    {
+      headers: { ...headers, host },
+      hostname,
+      pathname,
+      searchParams,
+      method,
+      followAllRedirects: true,
+    },
     originalResp => {
       resp.writeHead(originalResp.statusCode, {
         ...originalResp.headers,
