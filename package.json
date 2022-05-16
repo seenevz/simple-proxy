@@ -21,7 +21,8 @@
   },
   "homepage": "https://github.com/seenevz/simple-proxy#readme",
   "dependencies": {
-    "jsrsasign": "^10.1.4"
+    "jsrsasign": "^10.1.4",
+    "typescript": "^4.6.4"
   },
   "devDependencies": {
     "vercel": "^24.2.3"
