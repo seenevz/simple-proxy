@@ -1,46 +1,48 @@
 const auth = require("./_auth.js");
+const https = require("https");
 
 const urlProxy = (req, resp) => {
-  const https = require("https");
-
-  const {
-    query: { url },
-    headers,
-    method,
-    body,
-  } = req;
-
-  const { hostname, pathname, searchParams } = new URL(url);
-
-  const originalReq = https.request(
-    {
+  return new Promise((resolve, reject) => {
+    const {
+      query: { url },
       headers,
-      hostname,
-      pathname,
-      searchParams,
       method,
-    },
-    originalResp => {
-      resp.writeHead(originalResp.statusCode, {
-        ...originalResp.headers,
-        ...resp.headers,
-      });
+      body,
+    } = req;
 
-      originalResp.on("data", chunk => resp.write(chunk));
+    const { hostname, pathname, searchParams } = new URL(url);
 
-      originalResp.on("end", () => {
-        resp.end();
-      });
+    const originalReq = https.request(
+      {
+        headers,
+        hostname,
+        pathname,
+        searchParams,
+        method,
+      },
+      originalResp => {
+        resp.writeHead(originalResp.statusCode, {
+          ...originalResp.headers,
+          ...resp.headers,
+        });
 
-      originalResp.on("error", console.error);
-    }
-  );
+        originalResp.on("data", chunk => resp.write(chunk));
 
-  originalReq.removeHeader("host");
-  originalReq.end(body);
+        originalResp.on("end", () => {
+          resp.end();
+          resolve();
+        });
+
+        originalResp.on("error", reject);
+      }
+    );
+
+    originalReq.removeHeader("host");
+    originalReq.end(body);
+  });
 };
 
-const corsHandler = fn => (req, resp) => {
+const corsHandler = fn => async (req, resp) => {
   resp.setHeader("Access-Control-Allow-Origin", "*");
   resp.setHeader("Access-Control-Allow-Headers", "*");
   resp.setHeader("Access-Control-Expose-Headers", "*");
@@ -55,7 +57,7 @@ const corsHandler = fn => (req, resp) => {
   try {
     //check if user is allowed
     // if (auth.verifyToken(req.headers["x-auth-token"])) {
-    return fn(req, resp);
+    return await fn(req, resp);
     // } else {
     //   resp.status(401).end();
     //   return;
