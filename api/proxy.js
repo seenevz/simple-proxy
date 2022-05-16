@@ -5,12 +5,13 @@ const urlProxy = (req, resp) => {
 
   const {
     query: { url },
+    headers,
   } = req;
-  
-  https.get(url, originalResp => {
-    const headers = { ...originalResp.headers, ...req.headers };
 
-    resp.writeHead(200, headers);
+  const { hostname, pathname, searchParams } = new URL(url);
+
+  https.get({ headers, hostname, pathname, searchParams }, originalResp => {
+    resp.writeHead(originalResp.statusCode, originalResp.headers);
 
     originalResp.on("data", chunk => resp.write(chunk));
 
@@ -21,11 +22,11 @@ const urlProxy = (req, resp) => {
 };
 
 const corsHandler = fn => async (req, resp) => {
-  resp.setHeader("Access-Control-Allow-Origin", (req.headers.origin || "*"));
+  resp.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
   resp.setHeader("Access-Control-Allow-Headers", "x-auth-token");
   resp.setHeader("Access-Control-Expose-Headers", "*");
   resp.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  
+
   //To authenticate, request must have an header called x-auth-token with a valid token
   if (req.method === "OPTIONS") {
     resp.status(200).end();
