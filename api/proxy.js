@@ -14,7 +14,6 @@ const urlProxy = (req, resp) => {
 
     const originalReq = https.request(
       {
-        headers,
         hostname,
         pathname,
         searchParams,
@@ -45,7 +44,7 @@ const urlProxy = (req, resp) => {
         : new URLSearchParams(body).toString();
     }
 
-    originalReq.removeHeader("host");
+    originalReq.setHeader("x-api-key", headers["x-api-key"]);
     originalReq.end(reqBody);
   });
 };
