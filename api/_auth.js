@@ -3,10 +3,14 @@ const { KJUR } = require("jsrsasign");
 const allowedUsers = () => JSON.parse(process.env.ALLOWED_USERS);
 
 const verifyToken = token =>
-  KJUR.jws.JWS.verifyJWT(token, process.env.SECRET, {
-    alg: ["HS512"],
-    sub: allowedUsers(),
-  });
+  allowedUsers().reduce(
+    (_, sub) =>
+      KJUR.jws.JWS.verifyJWT(token, process.env.SECRET, {
+        alg: ["HS512"],
+        sub,
+      }),
+    false
+  );
 
 const createToken = payload =>
   KJUR.jws.JWS.sign(
@@ -16,9 +20,11 @@ const createToken = payload =>
     process.env.SECRET
   );
 
-//   auth.createToken({
+// console.log(
+//   createToken({
 //     sub: "seenevz",
 //   })
+// );
 
 module.exports = {
   verifyToken,
