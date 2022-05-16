@@ -11,17 +11,22 @@ const urlProxy = (req, resp) => {
   const { hostname, pathname, searchParams } = new URL(url);
 
   https.get({ headers, hostname, pathname, searchParams }, originalResp => {
-    resp.writeHead(originalResp.statusCode, originalResp.headers);
+    resp.writeHead(originalResp.statusCode, {
+      ...originalResp.headers,
+      ...resp.headers,
+    });
 
     originalResp.on("data", chunk => resp.write(chunk));
 
     originalResp.on("end", () => {
       resp.end();
     });
+
+    originalResp.on("error", console.error);
   });
 };
 
-const corsHandler = fn => async (req, resp) => {
+const corsHandler = fn => (req, resp) => {
   resp.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
   resp.setHeader("Access-Control-Allow-Headers", "x-auth-token");
   resp.setHeader("Access-Control-Expose-Headers", "*");
@@ -36,7 +41,7 @@ const corsHandler = fn => async (req, resp) => {
   try {
     //check if user is allowed
     // if (auth.verifyToken(req.headers["x-auth-token"])) {
-    return await fn(req, resp);
+    return fn(req, resp);
     // } else {
     //   resp.status(401).end();
     //   return;
