@@ -56,10 +56,10 @@ const corsHandler = fn => async (req, resp) => {
   resp.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
 
   //To authenticate, request must have an header called x-auth-token with a valid token
-  // if (req.method === "OPTIONS") {
-  //   resp.status(200).end();
-  //   return;
-  // }
+  if (req.method === "OPTIONS") {
+    resp.status(200).end();
+    return;
+  }
 
   try {
     //check if user is allowed
