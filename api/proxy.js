@@ -35,12 +35,12 @@ const corsHandler = fn => async (req, resp) => {
 
   try {
     //check if user is allowed
-    if (auth.verifyToken(req.headers["x-auth-token"])) {
-      return await fn(req, resp);
-    } else {
-      resp.status(401).end();
-      return;
-    }
+    // if (auth.verifyToken(req.headers["x-auth-token"])) {
+    return await fn(req, resp);
+    // } else {
+    //   resp.status(401).end();
+    //   return;
+    // }
   } catch (error) {
     //If token is malformed, it will throw an error while trying to verify
     resp.status(400).end();
