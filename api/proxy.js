@@ -38,9 +38,9 @@ const urlProxy = (req, resp) => {
     console.log(headers);
 
     let reqBody = "";
-    if (headers["Content-Type"]) {
-      originalReq.setHeader("Content-Type", headers["Content-Type"]);
-      reqBody = headers["Content-Type"].includes("application/json")
+    if (headers["content-type"]) {
+      originalReq.setHeader("content-type", headers["content-type"]);
+      reqBody = headers["content-type"].includes("application/json")
         ? JSON.stringify(body)
         : new URLSearchParams(body).toString();
     }
