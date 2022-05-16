@@ -1,8 +1,14 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
+import { ClientRequest } from "http";
+import { IncomingHttpHeaders, } from "http2";
 import https from "https"
 import auth from "./_auth"
 
 type AsyncReqHandler = (req: VercelRequest, resp: VercelResponse) => Promise<void>
+
+const filterHeaders = (headers: IncomingHttpHeaders) => Object.entries(headers).filter((header) => header[0] === "content-type" || (header[0].includes("x-") && header[0] !== 'x-auth-token'))
+
+const addHeaders = (req: ClientRequest, headers: IncomingHttpHeaders) => filterHeaders(headers).forEach(([key, val]) => req.setHeader(key, val ?? ""))
 
 const urlProxy = (req: VercelRequest, resp: VercelResponse) => {
   return new Promise<void>((resolve, reject) => {
@@ -15,43 +21,42 @@ const urlProxy = (req: VercelRequest, resp: VercelResponse) => {
 
     const { hostname, pathname, searchParams } = new URL(url as string);
 
-    const originalReq = https.request(
+    const proxyReq = https.request(
       {
         hostname,
         path: pathname,
         searchParams,
         method,
       },
-      originalResp => {
-        // resp.writeHead(originalResp.statusCode, {
-        //   ...originalResp.headers,
-        //   ...resp.headers,
-        // });
+      proxyResp => {
+        resp.writeHead(proxyResp.statusCode || 200, {
+          ...proxyResp.headers,
+          ...resp.getHeaders(),
+        });
 
-        originalResp.on("data", chunk => resp.write(chunk));
+        proxyResp.on("data", chunk => resp.write(chunk));
 
-        originalResp.on("end", () => {
+        proxyResp.on("end", () => {
           resp.end();
           resolve();
         });
 
-        originalResp.on("error", reject);
+        proxyResp.on("error", reject);
       }
     );
-    console.log(originalReq.path, pathname);
 
     let reqBody = "";
     if (headers["content-type"]) {
-      originalReq.setHeader("content-type", headers["content-type"]);
+      proxyReq.setHeader("content-type", headers["content-type"]);
       reqBody = headers["content-type"].includes("application/json")
         ? JSON.stringify(body)
         : new URLSearchParams(body).toString();
     }
 
-    originalReq.setHeader("x-api-key", headers["x-api-key"] || "");
-    console.log(originalReq.getHeaders());
+    addHeaders(proxyReq, headers)
+    console.log(proxyReq.getHeaders());
 
-    originalReq.end(reqBody);
+    proxyReq.end(reqBody);
   });
 };
 
