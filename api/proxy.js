@@ -18,7 +18,6 @@ const urlProxy = (req, resp) => {
       pathname,
       searchParams,
       method,
-      followAllRedirects: true,
     },
     originalResp => {
       resp.writeHead(originalResp.statusCode, {
