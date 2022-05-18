@@ -6,7 +6,7 @@ import auth from "./_auth"
 
 type AsyncReqHandler = (req: VercelRequest, resp: VercelResponse) => Promise<void>
 
-const headersRegex = /content-type|set-cookie|accept|x-\S*/i
+const headersRegex = /content-type|cookie|accept|x-\S*/i
 
 const filterHeaders = (headers: IncomingHttpHeaders) => Object.entries(headers).filter(header => !!headersRegex.exec(header[0]) && header[0] !== 'x-auth-token ')
 
