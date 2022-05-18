@@ -47,13 +47,6 @@ const urlProxy = (req: VercelRequest, resp: VercelResponse) => {
       }
     );
 
-    // let reqBody = "";
-    // if (headers["content-type"]) {
-    //   proxyReq.setHeader("content-type", headers["content-type"]);
-    //   reqBody = headers["content-type"].includes("application/json")
-    //     ? JSON.stringify(body)
-    //     : new URLSearchParams(body).toString();
-    // }
     addHeaders(proxyReq, headers)
 
     req.on("data", chunk => proxyReq.write(chunk))
@@ -82,12 +75,12 @@ const corsHandler = (fn: AsyncReqHandler) => async (req: VercelRequest, resp: Ve
 
   try {
     //check if user is allowed
-    // if (auth.verifyToken(req.headers["x-auth-token"])) {
-    return await fn(req, resp);
-    // } else {
-    //   resp.status(401).end();
-    //   return;
-    // }
+    if (auth.verifyToken(req.headers["x-auth-token"] as string)) {
+      return await fn(req, resp);
+    } else {
+      resp.status(401).end();
+      return;
+    }
   } catch (error) {
     //If token is malformed, it will throw an error while trying to verify
     console.error(error);
