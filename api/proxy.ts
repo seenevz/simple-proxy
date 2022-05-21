@@ -62,7 +62,7 @@ const urlProxy = (req: VercelRequest, resp: VercelResponse) => {
 const corsHandler = (fn: AsyncReqHandler) => async (req: VercelRequest, resp: VercelResponse) => {
   // const { protocol, hostname, port } = new URL(req.headers.origin!)
   resp.setHeader("Access-Control-Allow-Origin", req.headers.origin!);
-  resp.setHeader("Access-Control-Allow-Headers", "x-api-key");
+  resp.setHeader("Access-Control-Allow-Headers", "x-api-key, x-auth-token");
   resp.setHeader("Access-Control-Expose-Headers", "*");
   resp.setHeader("Access-Control-Allow-Credentials", "true")
   resp.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
